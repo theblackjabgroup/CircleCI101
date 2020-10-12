@@ -22,12 +22,12 @@
 
 	<distributionManagement>
   <repository>
-    <id>packagecloud-AmanTyagi</id>
-    <url>packagecloud+https://packagecloud.io/AmanTyagi/core</url>
+    <id>packagecloud-VA</id>
+    <url>packagecloud+https://packagecloud.io/VA/CIRCLECI100</url>
   </repository>
   <snapshotRepository>
-    <id>packagecloud-AmanTyagi</id>
-    <url>packagecloud+https://packagecloud.io/AmanTyagi/core</url>
+    <id>packagecloud-VA</id>
+    <url>packagecloud+https://packagecloud.io/VA/CIRCLECI100</url>
   </snapshotRepository>
 </distributionManagement>
 	

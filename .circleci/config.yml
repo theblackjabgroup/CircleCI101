@@ -3,6 +3,9 @@ version: 2.1
 orbs:
   slack: circleci/slack@3.4.2
   node: circleci/node@4.1.0
+  sonarcloud: sonarsource/sonarcloud@1.0.2
+  jira: circleci/jira@1.2.2
+  newman: postman/newman@0.0.2
 
 nightly:
      triggers:
@@ -13,6 +16,29 @@ nightly:
            
 jobs:
  
+  sonar_test:
+        docker:
+           - image: 'node:latest'
+        steps:
+           - checkout
+           - sonarcloud/scan
+ 
+  newman-collection-run:
+    executor: newman/postman-newman-docker
+    steps:
+      - checkout
+      - newman/newman-run:
+          collection: ./CircleCitest.postman_collection.json
+ 
+  cache-dependencies:
+    machine: # executor type
+            image: ubuntu-1604:201903-01 
+    
+    steps:
+      - save_cache:
+          key: my-cache
+          paths:
+            - test/example.js
   test_3:
     docker:
       - image: cimg/node:12.16
@@ -50,18 +76,7 @@ jobs:
                 success_message: Test-2 Success
 
          
-  ##slack_notify:
-       ## machine: # executor type
-           ## image: ubuntu-1604:201903-01
-       ## steps:
-          ## - slack/notify:
-                
-               ## color: '#42e2f4'
-                ##message: This is a custom message notification
-           ##- slack/status:
-               ## failure_message: Failed
-                ##success_message: Success
-          
+  
   
   
   
@@ -119,6 +134,8 @@ jobs:
           command: chmod +x mvnw
       - run:   
           command: ./mvnw -Dmaven.test.skip=true package
+      - store_artifacts:
+                path: /artifact/Demo1-0.0.1-20201016.061321-56.jar
       - slack/status:
                 failure_message: Build Failed
                 success_message: Build Success
@@ -128,7 +145,13 @@ workflows:
 
   build-test:
     jobs:
-      - build
+      - build:
+          post-steps:
+            - jira/notify
+      - cache-dependencies:
+          requires:
+            - build
+            
       - test_3:
           requires:
             - build
@@ -146,5 +169,15 @@ workflows:
       - post_test:
           requires:
             - deploy
+          post-steps:
+            - jira/notify:
+                environment_type: production
+                job_type: deployment
+      - sonar_test:
+          requires:
+            - post_test
+      - newman-collection-run:
+          requires:
+            - post_test
       
       

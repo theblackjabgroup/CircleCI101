@@ -172,7 +172,7 @@ workflows:
           post-steps:
             - jira/notify:
                 environment_type: production
-                job_type: deployment
+                job_type: deployment 
       - sonar_test:
           requires:
             - post_test

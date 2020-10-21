@@ -92,4 +92,5 @@ Once you’re in build settings, navigate to the ‘Environment Variables’ sec
 
 ##### Post-deploy:
 In this job we have used the curl command to check.
+update
 

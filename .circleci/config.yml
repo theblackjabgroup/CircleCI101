@@ -28,7 +28,7 @@ jobs:
     steps:
       - checkout
       - newman/newman-run:
-          collection: ./CircleCitest.postman_collection.json
+          collection: ./collection.json
  
   cache-dependencies:
     machine: # executor type
